@@ -4,10 +4,16 @@ require "address_search/ngram_entry"
 
 class AddressSearch
   attr_reader :dataset, :filename
-  def initialize(filename)
+  def initialize(filename, format = :csv)
     @filename = filename
-    @finder = JapanPostalCode::AddressFinder.new(filename: filename)
-    @dataset = NgramEntry.load(@finder.dump.values.flatten)
+    if format == :csv
+      finder = JapanPostalCode::AddressFinder.new(filename: filename)
+      @dataset = NgramEntry.load(finder.dump.values.flatten)
+    elsif format == :json
+      @dataset = NgramEntry.load_json(filename)
+    else 
+      raise ArgumentError.new("Unknown format #{format}")
+    end
   end
 
   def inspect
@@ -22,6 +28,12 @@ class AddressSearch
   end
 
   def perform(keyword)
+    find_matches(keyword).map do |match|
+      match.entry.record.raw
+    end
+  end
+
+  def find_matches(keyword)
     matches = []
     ngram = Ngram.new(keyword)
     dataset.each do |entry|
@@ -31,5 +43,9 @@ class AddressSearch
       end
     end
     matches.sort { |x, y| y.product <=> x.product }
+  end
+
+  def to_a
+    dataset.map(&:to_h)
   end
 end

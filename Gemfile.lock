@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/joshua5201/japan_postal_code.git
-  revision: 841d3de588d8dae99d8516a220218e31daa8af52
+  revision: 2ff54b8442bccce599c2aff12972005b29e181a1
   specs:
     japan_postal_code (0.1.0)
 
