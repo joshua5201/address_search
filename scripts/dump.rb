@@ -1,3 +1,4 @@
+#! /usr/bin/env ruby
 require "address_search"
 require "json"
 
